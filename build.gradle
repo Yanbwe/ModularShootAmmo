@@ -28,6 +28,9 @@ sourceSets.main.resources {
 
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
+
+    // 本地 ModularShoot 框架 jar（由 ../ModularShoot 构建产出）
+    flatDir { dirs '../ModularShoot/build/libs' }
 }
 
 base {
@@ -139,6 +142,17 @@ dependencies {
     // For more info:
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
+
+    // ModularShoot 框架（本地 flatDir 仓库，build/libs 下的 ModularShoot-0.1.1.jar）
+    implementation "org.yanbwe:modularshoot:${modularshoot_version}"
+
+    // JUnit 5 测试
+    testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
+    testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
 }
 
 // This block of code expands all declared replace properties in the specified resource targets.
