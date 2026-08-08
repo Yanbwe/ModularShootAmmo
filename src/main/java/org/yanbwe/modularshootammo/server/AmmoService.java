@@ -223,7 +223,7 @@ public final class AmmoService {
             int magSize = magSizeOf(player, ra);
             Optional<AmmoType> typeOpt = resolveAmmoType(gun, ra, player.level());
             if (typeOpt.isEmpty()) {
-                ModularShootAmmo.LOGGER.warn("lang:modularshootammo.reload.warn_no_type: ammo type removed while reloading (player={})",
+                ModularShootAmmo.LOGGER.warn("Ammo type removed while reloading; magazine kept as-is (player={})",
                         player.getScoreboardName());
             } else {
                 type = typeOpt.get();
