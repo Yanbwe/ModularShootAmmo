@@ -159,8 +159,10 @@ dependencies {
     // http://www.gradle.org/docs/current/userguide/artifact_dependencies_tutorial.html
     // http://www.gradle.org/docs/current/userguide/dependency_management.html
 
-    // ModularShoot 框架（本地 flatDir 仓库，build/libs 下的 ModularShoot-0.1.1.jar）
-    implementation "org.yanbwe:modularshoot:${modularshoot_version}"
+    // ModularShoot 框架（本地 flatDir 仓库，build/libs 下的 ModularShoot-0.1.1.jar；
+    // group 必须与框架发布坐标 org.yanbwe.modularshoot 一致——flatDir 忽略 group，
+    // 但 CI 从 GitHub Packages 拉取时 group 精确匹配才找得到）
+    implementation "org.yanbwe.modularshoot:modularshoot:${modularshoot_version}"
 
     // JUnit 5 测试
     testImplementation 'org.junit.jupiter:junit-jupiter:5.10.2'
