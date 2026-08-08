@@ -48,6 +48,9 @@ jobs:
 
       - name: Build
         run: ./gradlew build --no-daemon
+        env:
+          # 解析框架依赖（org.yanbwe:modularshoot）需从 GitHub Packages 拉取，必须携带 token
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Upload build artifact
         uses: actions/upload-artifact@v4

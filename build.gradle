@@ -29,8 +29,21 @@ sourceSets.main.resources {
 repositories {
     // Add here additional repositories if required by some of the dependencies below.
 
-    // 本地 ModularShoot 框架 jar（由 ../ModularShoot 构建产出）
+    // 本地 ModularShoot 框架 jar（由 ../ModularShoot 构建产出，本地开发用）
     flatDir { dirs '../ModularShoot/build/libs' }
+
+    // CI 环境：从 GitHub Packages 拉取框架 jar（GitHub Packages 强制要求认证，
+    // 本地无 GITHUB_TOKEN 时跳过注册，避免匿名 401 导致构建失败）
+    if (System.getenv('GITHUB_TOKEN') != null) {
+        maven {
+            name = 'ModularShootPackages'
+            url = 'https://maven.pkg.github.com/Yanbwe/ModularShoot'
+            credentials {
+                username = System.getenv('GITHUB_ACTOR') ?: ''
+                password = System.getenv('GITHUB_TOKEN')
+            }
+        }
+    }
 }
 
 base {
