@@ -1,0 +1,10 @@
+{
+  "tags": ["c:accessory"],
+  "item_icon": "modularshootammo:textures/item/demo_extended_mag.png",
+  "modifiers": [
+    { "attribute": "modularshootammo:mag_size", "operation": "add", "value": 15.0 }
+  ],
+  "name": "lang:modularshootammo.demo.plugin.demo_extended_mag",
+  "brief": "lang:modularshootammo.demo.plugin.demo_extended_mag.brief",
+  "description": "lang:modularshootammo.demo.plugin.demo_extended_mag.desc"
+}

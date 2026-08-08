@@ -1,0 +1,6 @@
+{
+  "tags": ["c:accessory"],
+  "priority": 10,
+  "name": "lang:modularshootammo.demo.plugin_type.demo_accessory",
+  "color": "#66AAFF"
+}

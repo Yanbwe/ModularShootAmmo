@@ -1,0 +1,6 @@
+{
+  "name": "lang:modularshootammo.ammo_type.shotgun_ammo",
+  "color": "#AAFF00",
+  "item": "modularshootammo:shotgun_ammo",
+  "per_shot_cost": 2
+}
