@@ -4,7 +4,6 @@ import java.util.Optional;
 
 import org.yanbwe.modularshoot.shooting.PreShootEvent;
 import org.yanbwe.modularshootammo.ModularShootAmmo;
-import org.yanbwe.modularshootammo.ammo.ReloadMath;
 import org.yanbwe.modularshootammo.registry.AmmoType;
 
 import net.minecraft.core.RegistryAccess;
@@ -17,8 +16,9 @@ import net.neoforged.fml.common.EventBusSubscriber;
 /**
  * PreShootEvent 扣弹（服务端）。
  *
- * <p>创造/未启用/豁免/未绑定 → 不介入；否则每发扣弹，打空（弹匣
- * 不足以支付下一发）后立即触发自动换弹（静默）。</p>
+ * <p>创造/未启用/豁免/未绑定 → 不介入；否则每发扣弹。最后一发打空后
+ * 不在此处自动换弹：自动换弹只由"空仓扣扳机"（下一发被 predicate 阻止并
+ * 打信号后，PlayerTick 检测）触发，见 {@link AmmoReloadTickHandler}。</p>
  */
 @EventBusSubscriber(modid = ModularShootAmmo.MODID)
 public final class AmmoShootEventHandler {
@@ -45,10 +45,7 @@ public final class AmmoShootEventHandler {
             return;
         }
         int perShot = type.get().perShotCost();
-        int mag = AmmoService.deductOneShot(sp, gun, perShot);
-        if (ReloadMath.isOutOfAmmo(mag, perShot)) {
-            AmmoService.tryStartReload(sp, gun, false); // 最后一发打空 → 立即自动换弹
-        }
+        AmmoService.deductOneShot(sp, gun, perShot); // 只扣弹，不触发换弹
     }
 
     private AmmoShootEventHandler() {}

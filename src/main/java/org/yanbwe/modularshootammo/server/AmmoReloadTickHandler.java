@@ -25,8 +25,9 @@ import net.neoforged.neoforge.event.tick.PlayerTickEvent;
  * 换弹倒计时与自动换弹检测（PlayerTickEvent.Post，服务端）+ 死亡/登出清理。
  *
  * <p>倒计时中：主手枪实例与 {@code reload_gun} 不符 → 中断；tick 归零 →
- * 完成结算；否则递减。倒计时外：弹匣不足且背包有弹 → 静默自动换弹
- * （射击被阻止后的下一 tick 触发）。</p>
+ * 完成结算；否则递减。倒计时外：消费"空仓扣扳机"信号（射击被弹药不足
+ * 阻止时由 AmmoShootPredicate 写入）后才尝试静默自动换弹；无信号不触发，
+ * 因此"最后一发打空"不会立即自动换弹。</p>
  */
 @EventBusSubscriber(modid = ModularShootAmmo.MODID)
 public final class AmmoReloadTickHandler {
@@ -57,7 +58,11 @@ public final class AmmoReloadTickHandler {
             }
             return;
         }
-        // 自动换弹检测：弹匣不足且背包有对应弹药（射击被阻止后的下一 tick 触发）
+        // 自动换弹检测：仅当"空仓扣扳机"信号存在（射击被弹药不足阻止，
+        // 见 AmmoShootPredicate）才尝试自动换弹；保留启用/豁免/绑定/类型前置检查
+        if (!AmmoService.consumePendingAutoReload(sp)) {
+            return;
+        }
         ItemStack gun = sp.getMainHandItem();
         RegistryAccess ra = sp.registryAccess();
         if (!AmmoService.isUsesAmmo(gun, ra)) {
@@ -76,7 +81,7 @@ public final class AmmoReloadTickHandler {
         }
         int mag = gs.getInt(AmmoStateIds.MAG_AMMO);
         if (ReloadMath.isOutOfAmmo(mag, type.get().perShotCost())) {
-            AmmoService.tryStartReload(sp, gun, false); // 静默
+            AmmoService.tryStartReload(sp, gun, false); // 静默（主手已换枪时内部条件自然失败）
         }
     }
 
@@ -88,11 +93,12 @@ public final class AmmoReloadTickHandler {
         }
     }
 
-    /** 登出 → 中断换弹 + 清理该玩家的提示节流记录。 */
+    /** 登出 → 中断换弹 + 清理该玩家的提示节流与自动换弹信号记录。 */
     @SubscribeEvent
     public static void onPlayerLoggedOut(PlayerEvent.PlayerLoggedOutEvent event) {
         if (event.getEntity() instanceof ServerPlayer sp) {
             AmmoService.interruptReload(sp);
+            AmmoService.clearPendingAutoReload(sp.getUUID());
             MessageThrottle.clear(sp.getUUID());
         }
     }

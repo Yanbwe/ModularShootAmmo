@@ -3,7 +3,9 @@ package org.yanbwe.modularshootammo.server;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 import org.yanbwe.modularshoot.ModularShootAPI;
@@ -52,7 +54,40 @@ public final class AmmoService {
     /** 绑定缺失 WARN 节流记录：枪械 id → 上次 WARN 的 gameTime */
     private static final Map<ResourceLocation, Long> LAST_UNBOUND_WARN_TICK = new HashMap<>();
 
+    /**
+     * 空仓扣扳机内存信号集（玩家 uuid）：由射击 predicate 在"弹匣不足以支付
+     * 下一发但背包有备弹"时写入，PlayerTick 自动换弹检测消费一次。
+     *
+     * <p>这是 predicate 侧的唯一副作用，仅用于决定是否触发自动换弹，
+     * 不修改玩家/物品/世界任何状态（predicate 的"纯判断"契约保持不变）。
+     * 服务端事件均为同一线程，ConcurrentHashMap 仅为防御性线程安全。</p>
+     */
+    private static final Set<UUID> PENDING_AUTO_RELOAD = ConcurrentHashMap.newKeySet();
+
     private AmmoService() {}
+
+    // ------------------------------------------------------------------
+    // 空仓扣扳机信号（自动换弹触发条件）
+    // ------------------------------------------------------------------
+
+    /** 记录一次"空仓扣扳机"：自动换弹检测将在下一 tick 消费并触发换弹。 */
+    public static void markPendingAutoReload(ServerPlayer player) {
+        PENDING_AUTO_RELOAD.add(player.getUUID());
+    }
+
+    /**
+     * 消费（且仅消费一次）"空仓扣扳机"信号。
+     *
+     * @return 存在未消费信号时为 true（调用方应尝试自动换弹）
+     */
+    public static boolean consumePendingAutoReload(ServerPlayer player) {
+        return PENDING_AUTO_RELOAD.remove(player.getUUID());
+    }
+
+    /** 清除某玩家的信号（登出清理，防止内存泄漏）。 */
+    public static void clearPendingAutoReload(UUID playerId) {
+        PENDING_AUTO_RELOAD.remove(playerId);
+    }
 
     // ------------------------------------------------------------------
     // 特性判断

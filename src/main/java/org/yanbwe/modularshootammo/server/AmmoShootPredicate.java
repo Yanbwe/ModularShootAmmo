@@ -14,6 +14,7 @@ import org.yanbwe.modularshootammo.registry.AmmoType;
 
 import net.minecraft.core.RegistryAccess;
 import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
@@ -54,6 +55,12 @@ public final class AmmoShootPredicate implements ShootPredicate {
         if (ReloadMath.isOutOfAmmo(mag, type.get().perShotCost())) {
             int reserve = AmmoInventoryHelper.countAmmo(player.getInventory().items,
                     BuiltInRegistries.ITEM.get(type.get().item()));
+            // 背包有备弹：空仓扣扳机 → 打"待自动换弹"内存信号（PlayerTick 消费一次）
+            // （框架仅从服务端 ShootingEngine 调用本 predicate，player 必为 ServerPlayer；
+            //   instanceof 仅为防御，避免非预期调用路径下抛错）
+            if (reserve > 0 && player instanceof ServerPlayer sp) {
+                AmmoService.markPendingAutoReload(sp);
+            }
             return ShootPredicateResult.failure(reserve > 0
                     ? "lang:modularshootammo.ammo.empty_auto"  // 弹药不足，自动换弹中...
                     : "lang:modularshootammo.ammo.empty");     // 弹药不足
