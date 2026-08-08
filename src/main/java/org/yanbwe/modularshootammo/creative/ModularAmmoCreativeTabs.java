@@ -25,9 +25,12 @@ public final class ModularAmmoCreativeTabs {
                     .title(Component.translatable("itemGroup.modularshootammo"))
                     .icon(() -> new ItemStack(ModularAmmoItems.RIFLE_AMMO))
                     .displayItems((params, output) -> {
+                        output.accept(ModularAmmoItems.PISTOL_AMMO.get());
                         output.accept(ModularAmmoItems.RIFLE_AMMO.get());
                         output.accept(ModularAmmoItems.SHOTGUN_AMMO.get());
-                        output.accept(ModularAmmoItems.DEMO_GUN.get());
+                        output.accept(ModularAmmoItems.SNIPER_AMMO.get());
+                        output.accept(ModularAmmoItems.DEMO_PISTOL.get());
+                        output.accept(ModularAmmoItems.DEMO_SHOTGUN.get());
                         output.accept(ModularAmmoItems.DEMO_EXTENDED_MAG.get());
                     })
                     .build());

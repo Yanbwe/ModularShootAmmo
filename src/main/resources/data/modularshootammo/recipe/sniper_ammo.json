@@ -4,5 +4,5 @@
     { "item": "minecraft:iron_ingot" },
     { "item": "minecraft:gunpowder" }
   ],
-  "result": { "id": "modularshootammo:rifle_ammo", "count": 8 }
+  "result": { "id": "modularshootammo:sniper_ammo", "count": 8 }
 }

@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "modularshootammo:item/demo_gun"
+    "layer0": "modularshootammo:gun/demo_shotgun"
   }
 }

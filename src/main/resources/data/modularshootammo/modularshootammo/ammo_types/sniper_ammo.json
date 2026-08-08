@@ -1,0 +1,6 @@
+{
+  "name": "lang:modularshootammo.ammo_type.sniper_ammo",
+  "color": "#AA88FF",
+  "item": "modularshootammo:sniper_ammo",
+  "per_shot_cost": 1
+}

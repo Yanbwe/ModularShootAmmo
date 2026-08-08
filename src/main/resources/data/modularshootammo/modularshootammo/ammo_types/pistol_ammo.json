@@ -1,0 +1,6 @@
+{
+  "name": "lang:modularshootammo.ammo_type.pistol_ammo",
+  "color": "#FFAA00",
+  "item": "modularshootammo:pistol_ammo",
+  "per_shot_cost": 1
+}

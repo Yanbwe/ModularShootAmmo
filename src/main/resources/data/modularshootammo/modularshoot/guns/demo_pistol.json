@@ -1,0 +1,27 @@
+{
+  "name": "lang:modularshootammo.demo.gun.demo_pistol",
+  "texture": "modularshootammo:textures/gun/demo_pistol.png",
+  "stats": {
+    "modularshoot:hit_damage": 6.0,
+    "modularshoot:fire_rate": 6.0,
+    "modularshoot:range": 40.0,
+    "modularshoot:bullet_speed": 35.0,
+    "modularshoot:accuracy_yaw": 3.0,
+    "modularshoot:accuracy_pitch": 3.0,
+    "modularshoot:block_penetration": 1.0,
+    "modularshoot:bullet_size": 0.35,
+    "modularshootammo:mag_size": 12.0,
+    "modularshootammo:reload_time": 15.0
+  },
+  "traits": {
+    "modularshootammo:uses_ammo": true
+  },
+  "slots": {
+    "modularshootammo:demo_accessory": 1
+  },
+  "sounds": {
+    "shoot": "minecraft:entity.blaze.shoot",
+    "hit_entity": "minecraft:entity.arrow.hit_player",
+    "hit_block": "minecraft:block.stone.hit"
+  }
+}

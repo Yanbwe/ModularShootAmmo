@@ -1,0 +1,28 @@
+{
+  "name": "lang:modularshootammo.demo.gun.demo_shotgun",
+  "texture": "modularshootammo:textures/gun/demo_shotgun.png",
+  "stats": {
+    "modularshoot:hit_damage": 4.0,
+    "modularshoot:fire_rate": 1.5,
+    "modularshoot:range": 30.0,
+    "modularshoot:bullet_speed": 30.0,
+    "modularshoot:accuracy_yaw": 8.0,
+    "modularshoot:accuracy_pitch": 8.0,
+    "modularshoot:block_penetration": 1.0,
+    "modularshoot:bullet_size": 0.4,
+    "modularshoot:pellet_count": 4.0,
+    "modularshootammo:mag_size": 6.0,
+    "modularshootammo:reload_time": 25.0
+  },
+  "traits": {
+    "modularshootammo:uses_ammo": true
+  },
+  "slots": {
+    "modularshootammo:demo_accessory": 1
+  },
+  "sounds": {
+    "shoot": "minecraft:entity.blaze.shoot",
+    "hit_entity": "minecraft:entity.arrow.hit_player",
+    "hit_block": "minecraft:block.stone.hit"
+  }
+}
