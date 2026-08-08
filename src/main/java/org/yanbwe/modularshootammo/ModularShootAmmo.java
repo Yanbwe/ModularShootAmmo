@@ -1,5 +1,7 @@
 package org.yanbwe.modularshootammo;
 
+import org.yanbwe.modularshootammo.attribute.ModularAmmoAttributes;
+
 import org.slf4j.Logger;
 
 import com.mojang.logging.LogUtils;
@@ -19,5 +21,6 @@ public class ModularShootAmmo {
     // FML will recognize some parameter types like IEventBus or ModContainer and pass them in automatically.
     public ModularShootAmmo(IEventBus modEventBus) {
         // Register DeferredRegisters to the mod event bus here as features are added.
+        ModularAmmoAttributes.ATTRIBUTES.register(modEventBus);
     }
 }
