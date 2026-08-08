@@ -16,7 +16,7 @@ import net.minecraft.resources.ResourceLocation;
  * }</pre>
  *
  * <p>条目 key 即枪械 id（如 {@code modularshootammo:demo_rifle}），表示该枪使用的
- * {@code modularammo:ammo_types} 弹药类型。绑定表仅服务端需要，不随网络同步。</p>
+ * {@code modularshootammo:ammo_types} 弹药类型。条目随网络同步到客户端（HUD 查询绑定用）。</p>
  *
  * @param ammoType 绑定的弹药类型注册表 id
  */
