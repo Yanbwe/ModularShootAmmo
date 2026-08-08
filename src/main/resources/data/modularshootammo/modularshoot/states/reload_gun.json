@@ -1,0 +1,10 @@
+{
+  "domain": "player",
+  "value_type": "uuid",
+  "display": {
+    "name": "lang:modularshootammo.state.reload_gun",
+    "color": "#FFAA00",
+    "priority": 10,
+    "hide_default": true
+  }
+}

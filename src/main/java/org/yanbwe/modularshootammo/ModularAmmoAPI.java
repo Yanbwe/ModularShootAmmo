@@ -3,6 +3,7 @@ package org.yanbwe.modularshootammo;
 import java.util.Optional;
 
 import org.yanbwe.modularshoot.plugin.TraitMergeService;
+import org.yanbwe.modularshootammo.ammo.AmmoTraitIds;
 import org.yanbwe.modularshootammo.registry.AmmoType;
 import org.yanbwe.modularshootammo.registry.AmmoTypeRegistry;
 import org.yanbwe.modularshootammo.registry.GunAmmoBindingRegistry;
@@ -13,19 +14,9 @@ import net.minecraft.world.item.ItemStack;
 
 /**
  * ModularShootAmmo 公开门面：弹药绑定、弹药类型查询与启用/豁免特性判断。
- *
- * <p>特性 ID 常量（{@code modularammo:uses_ammo}/{@code modularammo:infinite_ammo}）
- * 暂内联于此，任务 4 会抽出到独立常量类 {@code AmmoTraitIds}。</p>
  */
 public final class ModularAmmoAPI {
     private ModularAmmoAPI() {}
-
-    /** 特性：枪械使用弹匣弹药系统（任务 4 将抽出到 AmmoTraitIds）。 */
-    private static final ResourceLocation TRAIT_USES_AMMO =
-            ResourceLocation.fromNamespaceAndPath(ModularShootAmmo.MODID, "uses_ammo");
-    /** 特性：无限弹药，豁免扣弹（任务 4 将抽出到 AmmoTraitIds）。 */
-    private static final ResourceLocation TRAIT_INFINITE_AMMO =
-            ResourceLocation.fromNamespaceAndPath(ModularShootAmmo.MODID, "infinite_ammo");
 
     /**
      * Java API 绑定（命令/其他模组调用），与数据包绑定共享查询接口；
@@ -61,24 +52,24 @@ public final class ModularAmmoAPI {
     }
 
     /**
-     * 枪械是否启用弹药系统（{@code modularammo:uses_ammo} 最终特性值，含插件合并）。
+     * 枪械是否启用弹药系统（{@code modularshootammo:uses_ammo} 最终特性值，含插件合并）。
      *
      * @param gun 枪械物品
      * @param ra  运行时注册表视图
      * @return 未声明特性一律 {@code false}
      */
     public static boolean isUsesAmmo(ItemStack gun, RegistryAccess ra) {
-        return TraitMergeService.computeTraits(gun, ra).getOrDefault(TRAIT_USES_AMMO, false);
+        return TraitMergeService.computeTraits(gun, ra).getOrDefault(AmmoTraitIds.USES_AMMO, false);
     }
 
     /**
-     * 枪械是否豁免扣弹（{@code modularammo:infinite_ammo} 最终特性值，含插件合并）。
+     * 枪械是否豁免扣弹（{@code modularshootammo:infinite_ammo} 最终特性值，含插件合并）。
      *
      * @param gun 枪械物品
      * @param ra  运行时注册表视图
      * @return 未声明特性一律 {@code false}
      */
     public static boolean isInfiniteAmmo(ItemStack gun, RegistryAccess ra) {
-        return TraitMergeService.computeTraits(gun, ra).getOrDefault(TRAIT_INFINITE_AMMO, false);
+        return TraitMergeService.computeTraits(gun, ra).getOrDefault(AmmoTraitIds.INFINITE_AMMO, false);
     }
 }

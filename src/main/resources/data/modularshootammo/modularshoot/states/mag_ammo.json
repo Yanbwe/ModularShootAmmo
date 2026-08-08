@@ -1,0 +1,11 @@
+{
+  "domain": "gun",
+  "value_type": "int",
+  "default_value": 0,
+  "display": {
+    "name": "lang:modularshootammo.state.mag_ammo",
+    "color": "#FFAA00",
+    "priority": 10,
+    "hide_default": true
+  }
+}

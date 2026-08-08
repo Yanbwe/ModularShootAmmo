@@ -1,0 +1,7 @@
+{
+  "binds": "modularshootammo:mag_size",
+  "default_value": 30.0,
+  "color": "#FFAA00",
+  "priority": 0,
+  "force_show": false
+}
