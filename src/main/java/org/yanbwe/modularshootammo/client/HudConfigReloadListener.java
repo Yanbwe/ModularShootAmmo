@@ -60,7 +60,8 @@ public final class HudConfigReloadListener extends SimpleJsonResourceReloadListe
                     GsonHelper.getAsInt(obj, "offset_y", 8),
                     GsonHelper.getAsDouble(obj, "scale", 1.0),
                     GsonHelper.getAsBoolean(obj, "show_reserve", true),
-                    GsonHelper.getAsBoolean(obj, "show_reload_progress", true));
+                    GsonHelper.getAsBoolean(obj, "show_reload_progress", true),
+                    GsonHelper.getAsString(obj, "anchor", HudConfig.DEFAULT_ANCHOR));
         } catch (RuntimeException ex) {
             ModularShootAmmo.LOGGER.error("Failed to parse hud_config.json, using defaults", ex);
             HudConfig.reset();

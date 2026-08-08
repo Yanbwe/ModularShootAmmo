@@ -3,5 +3,6 @@
   "offset_y": 8,
   "scale": 1.0,
   "show_reserve": true,
-  "show_reload_progress": true
+  "show_reload_progress": true,
+  "anchor": "bottom_right"
 }

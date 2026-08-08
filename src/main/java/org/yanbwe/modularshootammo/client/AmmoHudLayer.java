@@ -19,15 +19,15 @@ import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
 
 /**
- * 右下角弹药 HUD 层：弹匣/备弹文本 + 换弹中提示与进度条。
+ * 弹药 HUD 层：弹匣/备弹文本 + 换弹中提示与进度条（四角锚点可配置）。
  *
  * <p>注册为 {@code registerAboveAll}（mod bus，Dist.CLIENT），绘制数据由
- * {@link ClientAmmoInfo#collect} 装配，位置/缩放由 {@link HudConfig} 控制
+ * {@link ClientAmmoInfo#collect} 装配，位置/缩放/锚点由 {@link HudConfig} 控制
  * （数据包 {@code modularammo/hud_config.json} 热重载）。</p>
  *
- * <p>缩放实现：pushPose 后先 scale，再按放大后的逻辑屏幕尺寸
- * {@code (screenWidth/scale - offset/scale)} 做右下角锚定计算，保证
- * 实际像素位置为 {@code screenWidth - offset - textWidth*scale}。</p>
+ * <p>缩放实现：pushPose 后先 scale，再按放大后的逻辑屏幕尺寸做锚点计算，
+ * {@code anchor=bottom_right} 时与旧版右下角行为完全一致（实际像素位置为
+ * {@code screenWidth - offset - textWidth*scale}）。</p>
  */
 @EventBusSubscriber(modid = ModularShootAmmo.MODID, bus = EventBusSubscriber.Bus.MOD, value = Dist.CLIENT)
 public final class AmmoHudLayer {
@@ -92,12 +92,18 @@ public final class AmmoHudLayer {
 
         guiGraphics.pose().pushPose();
         guiGraphics.pose().scale((float) scale, (float) scale, 1.0f);
-        // 右下角锚定：先 scale 再按逻辑坐标计算，右侧底边贴合
-        // screenWidth - offsetX / screenHeight - offsetY
+        // 锚点定位：先 scale 再按逻辑坐标计算；offset 始终是"距屏幕边缘的
+        // 像素距离"（scale 后逻辑坐标），四角由 anchor 决定贴合方向。
         int textWidth = font.width(line1);
         int totalHeight = font.lineHeight + (showReload ? font.lineHeight + 6 : 0);
-        int x = (int) ((screenWidth - HudConfig.offsetX()) / scale) - textWidth;
-        int y = (int) ((screenHeight - HudConfig.offsetY()) / scale) - totalHeight;
+        boolean right = HudConfig.anchor().endsWith("right");
+        boolean bottom = HudConfig.anchor().startsWith("bottom");
+        int x = right
+                ? (int) ((screenWidth - HudConfig.offsetX()) / scale) - textWidth
+                : (int) (HudConfig.offsetX() / scale);
+        int y = bottom
+                ? (int) ((screenHeight - HudConfig.offsetY()) / scale) - totalHeight
+                : (int) (HudConfig.offsetY() / scale);
 
         guiGraphics.drawString(font, line1, x, y, color);
 
