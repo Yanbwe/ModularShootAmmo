@@ -1,6 +1,9 @@
 package org.yanbwe.modularshootammo;
 
+import org.yanbwe.modularshoot.ModularShootAPI;
 import org.yanbwe.modularshootammo.attribute.ModularAmmoAttributes;
+import org.yanbwe.modularshootammo.server.AmmoShootPredicate;
+import org.yanbwe.modularshootammo.sound.ModularAmmoSounds;
 
 import org.slf4j.Logger;
 
@@ -22,5 +25,8 @@ public class ModularShootAmmo {
     public ModularShootAmmo(IEventBus modEventBus) {
         // Register DeferredRegisters to the mod event bus here as features are added.
         ModularAmmoAttributes.ATTRIBUTES.register(modEventBus);
+        ModularAmmoSounds.SOUNDS.register(modEventBus);
+        // 注册射击判断器（弹药充足性/换弹中检查），common setup 阶段调用
+        ModularShootAPI.registerShootPredicate(new AmmoShootPredicate());
     }
 }
