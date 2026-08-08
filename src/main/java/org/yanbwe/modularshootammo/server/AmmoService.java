@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import org.yanbwe.modularshoot.ModularShootAPI;
 import org.yanbwe.modularshoot.attribute.AttributeResolver;
 import org.yanbwe.modularshoot.component.GunData;
+import org.yanbwe.modularshoot.registry.gun.GunRegistry;
 import org.yanbwe.modularshoot.state.GunState;
 import org.yanbwe.modularshoot.state.PlayerState;
 import org.yanbwe.modularshootammo.ModularAmmoAPI;
@@ -30,6 +31,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -150,6 +152,9 @@ public final class AmmoService {
         if (gs == null) {
             return 0;
         }
+        // 栈上无 GUN_DATA 组件时 GunState.setInt 是静默 no-op（框架行为），
+        // 写入前先附加组件，避免扣弹静默丢失（绑定通道枪械懒附加路径）。
+        GunRegistry.ensureGunData(gun, player.registryAccess());
         int newMag = ReloadMath.deduct(gs.getInt(AmmoStateIds.MAG_AMMO), perShotCost);
         gs.setInt(AmmoStateIds.MAG_AMMO, newMag);
         return newMag;
@@ -164,7 +169,8 @@ public final class AmmoService {
      *
      * <p>{@code manual=true}（R 键）时条件不满足给出动作栏提示原因：
      * 弹匣已满 / 背包无对应弹药（带弹药名参数）；{@code manual=false}
-     * （自动换弹）时静默返回。</p>
+     * （自动换弹）时静默返回。创造模式下不检查背包备弹（视为无限），
+     * 其余检查不变。</p>
      */
     public static void tryStartReload(ServerPlayer player, ItemStack gun, boolean manual) {
         PlayerState ps = ModularShootAPI.getPlayerState(player);
@@ -189,14 +195,16 @@ public final class AmmoService {
             }
             return;
         }
-        int reserve = AmmoInventoryHelper.countAmmo(
-                player.getInventory().items, BuiltInRegistries.ITEM.get(type.item()));
-        if (reserve <= 0) {
-            if (manual) {
-                player.displayClientMessage(
-                        AmmoText.resolve("lang:modularshootammo.reload.no_ammo", AmmoText.resolve(type.name())), true);
+        // 创造模式：换弹不扣背包，备弹视为无限，跳过背包检查
+        if (!player.isCreative()) {
+            int reserve = availableReserve(type, player);
+            if (reserve <= 0) {
+                if (manual) {
+                    player.displayClientMessage(
+                            AmmoText.resolve("lang:modularshootammo.reload.no_ammo", AmmoText.resolve(type.name())), true);
+                }
+                return;
             }
-            return;
         }
         UUID uuid = gunInstanceUuid(gun);
         if (uuid == null) {
@@ -209,29 +217,51 @@ public final class AmmoService {
     }
 
     /**
-     * 换弹完成结算：按背包可用弹药补弹、扣背包、清换弹状态、音效与提示。
+     * 可用于换弹补充的备弹数：声明了 {@code reserve_limit} 时按上限截断
+     * （{@code <= 0} 视为 0，永不补充），未声明则无上限（取背包实际计数）。
+     */
+    private static int availableReserve(AmmoType type, Player player) {
+        int counted = AmmoInventoryHelper.countAmmo(
+                player.getInventory().items, BuiltInRegistries.ITEM.get(type.item()));
+        Integer limit = type.reserveLimit();
+        if (limit == null) {
+            return counted;
+        }
+        return Math.min(counted, Math.max(0, limit));
+    }
+
+    /**
+     * 换弹完成结算：按背包可用弹药补弹（受 {@code reserve_limit} 截断）、
+     * 扣背包、清换弹状态、音效与提示。创造模式不扣背包，直接补满弹匣。
      *
      * <p>弹药类型已被移除（如数据包变更）时仅 WARN，弹匣保持现状。</p>
      */
     public static void completeReload(ServerPlayer player, ItemStack gun) {
         PlayerState ps = ModularShootAPI.getPlayerState(player);
         RegistryAccess ra = player.registryAccess();
+        // 补弹写入前确保 GUN_DATA 存在（栈上无组件时 GunState.setInt 静默 no-op）
+        GunRegistry.ensureGunData(gun, ra);
         AmmoType type = null;
         GunState gs = ModularShootAPI.getState(gun, player);
         if (gs != null) {
             int mag = gs.getInt(AmmoStateIds.MAG_AMMO);
             int magSize = magSizeOf(player, ra);
-            Optional<AmmoType> typeOpt = resolveAmmoType(gun, ra, player.level());
-            if (typeOpt.isEmpty()) {
-                ModularShootAmmo.LOGGER.warn("Ammo type removed while reloading; magazine kept as-is (player={})",
-                        player.getScoreboardName());
+            if (player.isCreative()) {
+                // 创造模式：换弹不扣背包，直接补满弹匣
+                gs.setInt(AmmoStateIds.MAG_AMMO, magSize);
             } else {
-                type = typeOpt.get();
-                Item item = BuiltInRegistries.ITEM.get(type.item());
-                int need = ReloadMath.fillAmount(mag, magSize,
-                        AmmoInventoryHelper.countAmmo(player.getInventory().items, item));
-                int consumed = AmmoInventoryHelper.consumeAmmo(player.getInventory().items, item, need);
-                gs.setInt(AmmoStateIds.MAG_AMMO, mag + consumed);
+                Optional<AmmoType> typeOpt = resolveAmmoType(gun, ra, player.level());
+                if (typeOpt.isEmpty()) {
+                    ModularShootAmmo.LOGGER.warn("Ammo type removed while reloading; magazine kept as-is (player={})",
+                            player.getScoreboardName());
+                } else {
+                    type = typeOpt.get();
+                    Item item = BuiltInRegistries.ITEM.get(type.item());
+                    int available = availableReserve(type, player);
+                    int need = ReloadMath.fillAmount(mag, magSize, available);
+                    int consumed = AmmoInventoryHelper.consumeAmmo(player.getInventory().items, item, need);
+                    gs.setInt(AmmoStateIds.MAG_AMMO, mag + consumed);
+                }
             }
         }
         ps.clearState(AmmoStateIds.RELOAD_TICK);
