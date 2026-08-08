@@ -68,4 +68,4 @@ Just like ModularShoot.
 
 # 许可证 / License
 
-GPLv3
+MIT
