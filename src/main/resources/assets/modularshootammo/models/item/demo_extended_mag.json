@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "modularshootammo:item/demo_extended_mag"
+  }
+}

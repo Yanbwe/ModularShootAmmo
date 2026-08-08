@@ -1,0 +1,4 @@
+{
+  "reload_start": { "sounds": [ "modularshootammo:reload_start" ] },
+  "reload_finish": { "sounds": [ "modularshootammo:reload_finish" ] }
+}
