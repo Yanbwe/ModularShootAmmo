@@ -1,6 +1,6 @@
 {
   "parent": "minecraft:item/generated",
   "textures": {
-    "layer0": "modularshootammo:item/bullet"
+    "layer0": "modularshootammo:item/bullet_purple"
   }
 }
