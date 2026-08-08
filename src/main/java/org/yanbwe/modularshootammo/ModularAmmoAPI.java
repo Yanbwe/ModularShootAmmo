@@ -23,7 +23,7 @@ public final class ModularAmmoAPI {
      * Java 优先且跨 {@code /reload} 存活。
      *
      * @param gunId      枪械 id（{@code modularshoot:guns} 注册表）
-     * @param ammoTypeId 弹药类型 id（{@code modularammo:ammo_types} 注册表）
+     * @param ammoTypeId 弹药类型 id（{@code modularshootammo:ammo_types} 注册表）
      */
     public static void bindGun(ResourceLocation gunId, ResourceLocation ammoTypeId) {
         GunAmmoBindingRegistry.bind(gunId, ammoTypeId);

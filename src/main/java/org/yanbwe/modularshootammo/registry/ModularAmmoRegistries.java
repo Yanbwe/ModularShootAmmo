@@ -12,7 +12,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 /**
  * 弹药模组两个动态数据包注册表的总声明（仿框架 ModularShootRegistries）：
  * <ul>
- *   <li>{@code modularammo:ammo_types}（弹药类型）——网络 codec 非空，内容同步客户端；
+ *   <li>{@code modularshootammo:ammo_types}（弹药类型）——网络 codec 非空，内容同步客户端；
  *   <li>{@code modularammo:gun_ammo_bindings}（枪械→弹药绑定）——网络 codec 非空，
  *       同步客户端：HUD 需要查询绑定。
  * </ul>
@@ -24,7 +24,7 @@ import net.neoforged.neoforge.registries.DataPackRegistryEvent;
 public final class ModularAmmoRegistries {
     private ModularAmmoRegistries() {}
 
-    /** 注册表 key：{@code modularammo:ammo_types}（弹药类型，同步客户端）。 */
+    /** 注册表 key：{@code modularshootammo:ammo_types}（弹药类型，同步客户端）。 */
     public static final ResourceKey<Registry<AmmoType>> AMMO_TYPES_KEY =
             ResourceKey.createRegistryKey(
                     ResourceLocation.fromNamespaceAndPath(ModularShootAmmo.MODID, "ammo_types"));

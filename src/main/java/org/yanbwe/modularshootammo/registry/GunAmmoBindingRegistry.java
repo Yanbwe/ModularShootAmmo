@@ -27,7 +27,7 @@ public final class GunAmmoBindingRegistry {
      * 使数据包中同 id 条目在查询层被 Java 绑定遮蔽。</p>
      *
      * @param gunId      枪械 id（{@code modularshoot:guns} 注册表）
-     * @param ammoTypeId 弹药类型 id（{@code modularammo:ammo_types} 注册表）
+     * @param ammoTypeId 弹药类型 id（{@code modularshootammo:ammo_types} 注册表）
      */
     public static void bind(ResourceLocation gunId, ResourceLocation ammoTypeId) {
         JAVA_BINDINGS.put(gunId, ammoTypeId);

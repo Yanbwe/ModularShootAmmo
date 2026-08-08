@@ -6,7 +6,7 @@ import net.minecraft.core.RegistryAccess;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * 弹药类型查询层：从运行时注册表视图读取 {@code modularammo:ammo_types} 条目。
+ * 弹药类型查询层：从运行时注册表视图读取 {@code modularshootammo:ammo_types} 条目。
  */
 public final class AmmoTypeRegistry {
     private AmmoTypeRegistry() {}

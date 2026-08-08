@@ -10,7 +10,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
 
 /**
- * 弹药类型定义（数据包注册表 {@code modularammo:ammo_types} 的条目）。
+ * 弹药类型定义（数据包注册表 {@code modularshootammo:ammo_types} 的条目）。
  *
  * <p>JSON 格式：</p>
  * <pre>{@code

@@ -18,7 +18,7 @@ import net.neoforged.neoforge.event.entity.player.ItemTooltipEvent;
 /**
  * 弹药物品 tooltip：追加一行归属弹药类型（设计文档系统七）。
  *
- * <p>遍历 {@code modularammo:ammo_types} 注册表，找 {@code item} 字段等于
+ * <p>遍历 {@code modularshootammo:ammo_types} 注册表，找 {@code item} 字段等于
  * 当前物品的弹药类型；命中则在 tooltip 末尾追加一行
  * {@code 弹药类型显示名}（以弹药类型 {@code color} 着色），未命中不追加。
  * 注册表条目量小（demo 仅 2 个），逐条遍历无性能问题。</p>
