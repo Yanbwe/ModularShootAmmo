@@ -2,6 +2,7 @@ package org.yanbwe.modularshootammo.client;
 
 import org.yanbwe.modularshootammo.ModularShootAmmo;
 import org.yanbwe.modularshootammo.ammo.AmmoText;
+import org.yanbwe.modularshootammo.client.config.ModularAmmoClientConfig;
 
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
@@ -22,8 +23,9 @@ import net.neoforged.neoforge.client.event.RegisterGuiLayersEvent;
  * 弹药 HUD 层：弹匣/备弹文本 + 换弹中提示与进度条（四角锚点可配置）。
  *
  * <p>注册为 {@code registerAboveAll}（mod bus，Dist.CLIENT），绘制数据由
- * {@link ClientAmmoInfo#collect} 装配，位置/缩放/锚点由 {@link HudConfig} 控制
- * （数据包 {@code modularammo/hud_config.json} 热重载）。</p>
+ * {@link ClientAmmoInfo#collect} 装配，位置/缩放/锚点由
+ * {@link ModularAmmoClientConfig} 控制（NeoForge 客户端配置
+ * {@code modularshootammo-client.toml}，配置界面实时生效）。</p>
  *
  * <p>缩放实现：pushPose 后先 scale，再按放大后的逻辑屏幕尺寸做锚点计算，
  * {@code anchor=bottom_right} 时与旧版右下角行为完全一致（实际像素位置为
@@ -74,7 +76,7 @@ public final class AmmoHudLayer {
                 ? AmmoText.resolve("lang:modularshootammo.hud.unbounded")
                 : Component.literal(String.valueOf(data.mag()));
         MutableComponent line1 = magText;
-        if (HudConfig.showReserve()) {
+        if (ModularAmmoClientConfig.isShowReserve()) {
             MutableComponent reserveText = (creative || infinite)
                     ? AmmoText.resolve("lang:modularshootammo.hud.unbounded")
                     : Component.literal(String.valueOf(data.reserve()));
@@ -85,8 +87,8 @@ public final class AmmoHudLayer {
                 ? COLOR_OUT_OF_AMMO
                 : data.type().color();
 
-        boolean showReload = data.reloading() && HudConfig.showReloadProgress();
-        double scale = HudConfig.scale();
+        boolean showReload = data.reloading() && ModularAmmoClientConfig.isShowReloadProgress();
+        double scale = ModularAmmoClientConfig.getScale();
         int screenWidth = mc.getWindow().getGuiScaledWidth();
         int screenHeight = mc.getWindow().getGuiScaledHeight();
 
@@ -96,14 +98,17 @@ public final class AmmoHudLayer {
         // 像素距离"（scale 后逻辑坐标），四角由 anchor 决定贴合方向。
         int textWidth = font.width(line1);
         int totalHeight = font.lineHeight + (showReload ? font.lineHeight + 6 : 0);
-        boolean right = HudConfig.anchor().endsWith("right");
-        boolean bottom = HudConfig.anchor().startsWith("bottom");
+        ModularAmmoClientConfig.HudAnchor anchor = ModularAmmoClientConfig.getAnchor();
+        boolean right = anchor == ModularAmmoClientConfig.HudAnchor.BOTTOM_RIGHT
+                || anchor == ModularAmmoClientConfig.HudAnchor.TOP_RIGHT;
+        boolean bottom = anchor == ModularAmmoClientConfig.HudAnchor.BOTTOM_RIGHT
+                || anchor == ModularAmmoClientConfig.HudAnchor.BOTTOM_LEFT;
         int x = right
-                ? (int) ((screenWidth - HudConfig.offsetX()) / scale) - textWidth
-                : (int) (HudConfig.offsetX() / scale);
+                ? (int) ((screenWidth - ModularAmmoClientConfig.getOffsetX()) / scale) - textWidth
+                : (int) (ModularAmmoClientConfig.getOffsetX() / scale);
         int y = bottom
-                ? (int) ((screenHeight - HudConfig.offsetY()) / scale) - totalHeight
-                : (int) (HudConfig.offsetY() / scale);
+                ? (int) ((screenHeight - ModularAmmoClientConfig.getOffsetY()) / scale) - totalHeight
+                : (int) (ModularAmmoClientConfig.getOffsetY() / scale);
 
         guiGraphics.drawString(font, line1, x, y, color);
 
