@@ -7,9 +7,11 @@ import net.neoforged.neoforge.registries.DeferredRegister;
 import org.yanbwe.modularshootammo.ModularShootAmmo;
 
 /**
- * 默认弹药物品与 demo 物品注册。
+ * 默认弹药物品与 demo 插件物品注册。
  *
- * <p>弹药物品可堆叠且耐火；demo 枪不可堆叠（枪械物品惯例），
+ * <p>弹药物品可堆叠且耐火。demo 枪不注册专属物品——所有枪械统一使用
+ * 框架的通用枪物品（{@code modularshoot:gun}），枪型由栈上的
+ * {@code gun_data} 组件决定（见 {@code ModularAmmoCreativeTabs}）。
  * demo 扩容弹匣插件物品可堆叠 64。</p>
  */
 public final class ModularAmmoItems {
@@ -33,14 +35,6 @@ public final class ModularAmmoItems {
     /** 狙击弹药（弹药类型 {@code modularshootammo:sniper_ammo} 的消耗品）。 */
     public static final DeferredHolder<Item, Item> SNIPER_AMMO =
             ITEMS.registerSimpleItem("sniper_ammo", new Item.Properties().stacksTo(64).fireResistant());
-
-    /** demo 手枪物品（绑定到 {@code modularshootammo:demo_pistol} 枪械，不可堆叠）。 */
-    public static final DeferredHolder<Item, Item> DEMO_PISTOL =
-            ITEMS.registerSimpleItem("demo_pistol", new Item.Properties().stacksTo(1));
-
-    /** demo 散弹枪物品（绑定到 {@code modularshootammo:demo_shotgun} 枪械，不可堆叠）。 */
-    public static final DeferredHolder<Item, Item> DEMO_SHOTGUN =
-            ITEMS.registerSimpleItem("demo_shotgun", new Item.Properties().stacksTo(1));
 
     /** demo 扩容弹匣插件物品（绑定到 {@code modularshootammo:demo_extended_mag} 插件）。 */
     public static final DeferredHolder<Item, Item> DEMO_EXTENDED_MAG =
