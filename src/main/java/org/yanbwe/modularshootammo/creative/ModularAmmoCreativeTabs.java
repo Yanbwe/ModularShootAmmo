@@ -13,7 +13,6 @@ import net.neoforged.neoforge.event.BuildCreativeModeTabContentsEvent;
 import net.neoforged.neoforge.registries.DeferredHolder;
 import net.neoforged.neoforge.registries.DeferredRegister;
 
-import org.yanbwe.modularshoot.attribute.AttributeModifierService;
 import org.yanbwe.modularshoot.registry.ModularShootRegistries;
 import org.yanbwe.modularshoot.registry.gun.GunRegistry;
 import org.yanbwe.modularshootammo.ModularShootAmmo;
@@ -94,9 +93,7 @@ public final class ModularAmmoCreativeTabs {
                 guns.keySet().stream()
                         .filter(gunId -> gunId.getNamespace().equals(ModularShootAmmo.MODID))
                         .forEach(gunId -> {
-                            ItemStack gunStack = GunRegistry.createGunStack(gunId);
-                            // 刷新属性修饰符，使标签页中的枪拥有非零统计（射速等）。
-                            AttributeModifierService.refreshModifiers(gunStack, registryAccess);
+                            ItemStack gunStack = GunRegistry.createGunStack(gunId, registryAccess);
                             event.accept(gunStack);
                         }));
     }
